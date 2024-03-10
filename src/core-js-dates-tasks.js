@@ -48,8 +48,18 @@ function getTime(date) {
  * '03 Dec 1995 00:12:00 UTC' => 'Sunday'
  * '2024-01-30T00:00:00.000Z' => 'Tuesday'
  */
-function getDayName(/* date */) {
-  throw new Error('Not implemented');
+function getDayName(date) {
+  const days = [
+    'Sunday',
+    'Monday',
+    'Tuesday',
+    'Wednesday',
+    'Thursday',
+    'Friday',
+    'Saturday',
+  ];
+  const newDate = new Date(date);
+  return days[newDate.getDay()];
 }
 
 /**
@@ -63,8 +73,15 @@ function getDayName(/* date */) {
  * Date('2024-02-13T00:00:00Z') => Date('2024-02-16T00:00:00Z')
  * Date('2024-02-16T00:00:00Z') => Date('2024-02-23T00:00:00Z')
  */
-function getNextFriday(/* date */) {
-  throw new Error('Not implemented');
+function getNextFriday(date) {
+  const newDate = new Date(date);
+  newDate.setDate(newDate.getDate() + 1);
+  let day = newDate.toLocaleDateString('en-US', { weekday: 'long' });
+  while (day !== 'Friday') {
+    newDate.setDate(newDate.getDate() + 1);
+    day = newDate.toLocaleDateString('en-US', { weekday: 'long' });
+  }
+  return newDate;
 }
 
 /**
@@ -78,8 +95,9 @@ function getNextFriday(/* date */) {
  * 1, 2024 => 31
  * 2, 2024 => 29
  */
-function getCountDaysInMonth(/* month, year */) {
-  throw new Error('Not implemented');
+function getCountDaysInMonth(month, year) {
+  const newDAte = new Date(year, month - 1, 32);
+  return 32 - newDAte.getDate();
 }
 
 /**
@@ -93,8 +111,10 @@ function getCountDaysInMonth(/* month, year */) {
  * '2024-02-01T00:00:00.000Z', '2024-02-02T00:00:00.000Z'  => 2
  * '2024-02-01T00:00:00.000Z', '2024-02-12T00:00:00.000Z'  => 12
  */
-function getCountDaysOnPeriod(/* dateStart, dateEnd */) {
-  throw new Error('Not implemented');
+function getCountDaysOnPeriod(dateStart, dateEnd) {
+  const start = new Date(dateStart);
+  const end = new Date(dateEnd);
+  return (end - start + 86400000) / 86400000;
 }
 
 /**
@@ -114,8 +134,17 @@ function getCountDaysOnPeriod(/* dateStart, dateEnd */) {
  * '2024-02-02', { start: '2024-02-02', end: '2024-03-02' } => true
  * '2024-02-10', { start: '2024-02-02', end: '2024-03-02' } => true
  */
-function isDateInPeriod(/* date, period */) {
-  throw new Error('Not implemented');
+function isDateInPeriod(date, period) {
+  const newDate = new Date(date);
+  const start = new Date(period.start);
+  const end = new Date(period.end);
+  while (start <= end) {
+    if (start === newDate) {
+      return true;
+    }
+    start.setDate(start.getDate() + 1);
+  }
+  return false;
 }
 
 /**
