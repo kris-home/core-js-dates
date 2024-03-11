@@ -139,7 +139,7 @@ function isDateInPeriod(date, period) {
   const start = new Date(period.start);
   const end = new Date(period.end);
   while (start <= end) {
-    if (start === newDate) {
+    if (String(start) === String(newDate)) {
       return true;
     }
     start.setDate(start.getDate() + 1);
@@ -160,6 +160,9 @@ function isDateInPeriod(date, period) {
  */
 function formatDate(/* date */) {
   throw new Error('Not implemented');
+
+  // const newDate = new Date(date);
+  // return `${newDate.getDate() - 1}/${newDate.getMonth() + 1}/${newDate.getFullYear()}, ${String(newDate.getHours()).padStart(2, '0')}:${String(newDate.getMinutes()).padStart(2, '0')}:${String(newDate.getSeconds()).padStart(2, '0')}`;
 }
 
 /**
