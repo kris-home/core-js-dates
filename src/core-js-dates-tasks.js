@@ -209,8 +209,17 @@ function getWeekNumberByDate(/* date */) {
  * Date(2024, 0, 13) => Date(2024, 8, 13)
  * Date(2023, 1, 1) => Date(2023, 9, 13)
  */
-function getNextFridayThe13th(/* date */) {
-  throw new Error('Not implemented');
+function getNextFridayThe13th(date) {
+  const newDate = new Date(date);
+  while (newDate) {
+    if (newDate.getDay() === 5) {
+      if (newDate.getDate() === 13) {
+        return newDate;
+      }
+    }
+    newDate.setDate(newDate.getDate() + 1);
+  }
+  return newDate;
 }
 
 /**
@@ -224,8 +233,23 @@ function getNextFridayThe13th(/* date */) {
  * Date(2024, 5, 1) => 2
  * Date(2024, 10, 10) => 4
  */
-function getQuarter(/* date */) {
-  throw new Error('Not implemented');
+function getQuarter(date) {
+  const newDate = new Date(date);
+  const get = newDate.getMonth();
+  let result = 0;
+  if (get === 0 || get === 1 || get === 2) {
+    result = 1;
+  }
+  if (get === 3 || get === 4 || get === 5) {
+    result = 2;
+  }
+  if (get === 6 || get === 7 || get === 8) {
+    result = 3;
+  }
+  if (get === 9 || get === 10 || get === 11) {
+    result = 4;
+  }
+  return result;
 }
 
 /**
@@ -246,8 +270,26 @@ function getQuarter(/* date */) {
  * { start: '01-01-2024', end: '15-01-2024' }, 1, 3 => ['01-01-2024', '05-01-2024', '09-01-2024', '13-01-2024']
  * { start: '01-01-2024', end: '10-01-2024' }, 1, 1 => ['01-01-2024', '03-01-2024', '05-01-2024', '07-01-2024', '09-01-2024']
  */
-function getWorkSchedule(/* period, countWorkDays, countOffDays */) {
-  throw new Error('Not implemented');
+function getWorkSchedule(period, countWorkDays, countOffDays) {
+  let [month, day, year] = period.start.split('-');
+  const resultStart = [day, month, year].join('-');
+  const start = new Date(resultStart);
+  [month, day, year] = period.end.split('-');
+  const resultEnd = [day, month, year].join('-');
+  const end = new Date(resultEnd);
+  const schedule = [];
+  while (start <= end) {
+    for (let i = 0; i <= countWorkDays; i += 1) {
+      const workDay = new Date(start);
+      const result = `${String(workDay.getDate()).padStart(2, '0')}-${String(workDay.getMonth() + 1).padStart(2, '0')}-${workDay.getFullYear()}`;
+      schedule.push(result);
+      start.setDate(start.getDate() + 1);
+    }
+    for (let a = 0; a <= countOffDays; a += 1) {
+      start.setDate(start.getDate() + 1);
+    }
+  }
+  return schedule;
 }
 
 /**
