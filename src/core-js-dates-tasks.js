@@ -204,8 +204,21 @@ function getCountWeekendsInMonth(month, year) {
  * Date(2024, 0, 31) => 5
  * Date(2024, 1, 23) => 8
  */
-function getWeekNumberByDate(/* date */) {
-  throw new Error('Not implemented');
+function getWeekNumberByDate(date) {
+  const newDate = new Date(date);
+  const year = newDate.getFullYear();
+  let firstDayWeek = new Date(year, 0, 1).getDay();
+  let days = 0;
+  if (firstDayWeek === 0) {
+    firstDayWeek = 7;
+  }
+  const daysInFirstWeek = 7 - firstDayWeek + 1;
+  for (let i = 0; i < newDate.getMonth(); i += 1) {
+    const daysMonth = new Date(year, i + 1, 0).getDate();
+    days += daysMonth;
+  }
+  const daysInCurrentMonth = newDate.getDate();
+  return Math.ceil((days + daysInCurrentMonth - daysInFirstWeek) / 7) + 1;
 }
 
 /**
@@ -281,25 +294,25 @@ function getQuarter(date) {
  * { start: '01-01-2024', end: '10-01-2024' }, 1, 1 => ['01-01-2024', '03-01-2024', '05-01-2024', '07-01-2024', '09-01-2024']
  */
 function getWorkSchedule(period, countWorkDays, countOffDays) {
-  let [month, day, year] = period.start.split('-');
-  const resultStart = [day, month, year].join('-');
-  const start = new Date(resultStart);
-  [month, day, year] = period.end.split('-');
-  const resultEnd = [day, month, year].join('-');
-  const end = new Date(resultEnd);
-  const schedule = [];
-  while (start <= end) {
-    for (let i = 0; i <= countWorkDays; i += 1) {
-      const workDay = new Date(start);
-      const result = `${String(workDay.getDate()).padStart(2, '0')}-${String(workDay.getMonth() + 1).padStart(2, '0')}-${workDay.getFullYear()}`;
-      schedule.push(result);
-      start.setDate(start.getDate() + 1);
-    }
-    for (let a = 0; a <= countOffDays; a += 1) {
-      start.setDate(start.getDate() + 1);
+  const start = new Date(period.start.split('-').reverse().join('-'));
+  const end = new Date(period.end.split('-').reverse().join('-'));
+  const days = (end - start) / (24 * 60 * 60 * 1000) + 1;
+  const count = countOffDays + countWorkDays;
+  const shedule = [];
+  for (let i = 0; i < days; i += count) {
+    for (let j = 0; j < countWorkDays; j += 1) {
+      const workDay = new Date(start.setDate(start.getDate() + i + j));
+      const day = String(workDay.getDate()).padStart(2, '0');
+      const month = String(workDay.getMonth() + 1).padStart(2, '0');
+      const year = workDay.getFullYear();
+      if (end >= workDay) {
+        shedule.push(`${day.slice(-2)}-${month.slice(-2)}-${year}`);
+      }
+
+      start.setDate(start.getDate() - i - j);
     }
   }
-  return schedule;
+  return shedule;
 }
 
 /**
