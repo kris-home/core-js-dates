@@ -158,11 +158,12 @@ function isDateInPeriod(date, period) {
  * '1999-01-05T02:20:00.000Z' => '1/5/1999, 2:20:00 AM'
  * '2010-12-15T22:59:00.000Z' => '12/15/2010, 10:59:00 PM'
  */
-function formatDate(/* date */) {
-  throw new Error('Not implemented');
-
-  // const newDate = new Date(date);
-  // return `${newDate.getDate() - 1}/${newDate.getMonth() + 1}/${newDate.getFullYear()}, ${String(newDate.getHours()).padStart(2, '0')}:${String(newDate.getMinutes()).padStart(2, '0')}:${String(newDate.getSeconds()).padStart(2, '0')}`;
+function formatDate(date) {
+  const newDate = new Date(date);
+  const hours = newDate.getUTCHours();
+  const formatHours = hours > 12 ? hours - 12 : hours;
+  const format = hours >= 12 ? 'PM' : 'AM';
+  return `${newDate.getUTCMonth() + 1}/${newDate.getUTCDate()}/${newDate.getUTCFullYear()}, ${formatHours}:${String(newDate.getUTCMinutes()).padStart(2, 0)}:${String(newDate.getUTCSeconds()).padStart(2, 0)} ${format}`;
 }
 
 /**
@@ -177,8 +178,17 @@ function formatDate(/* date */) {
  * 12, 2023 => 10
  * 1, 2024 => 8
  */
-function getCountWeekendsInMonth(/* month, year */) {
-  throw new Error('Not implemented');
+function getCountWeekendsInMonth(month, year) {
+  const date = new Date(year, month, 0).getDate();
+  let weekends = 0;
+  for (let i = 1; i <= date; i += 1) {
+    const day = new Date(year, month - 1, i).getDay();
+    if (day === 6 || day === 0) {
+      weekends += 1;
+    }
+  }
+
+  return weekends;
 }
 
 /**
@@ -304,8 +314,12 @@ function getWorkSchedule(period, countWorkDays, countOffDays) {
  * Date(2022, 2, 1) => false
  * Date(2020, 2, 1) => true
  */
-function isLeapYear(/* date */) {
-  throw new Error('Not implemented');
+function isLeapYear(date) {
+  const year = new Date(date).getFullYear();
+  if ((year % 4 === 0 && year % 100 !== 0) || year % 400 === 0) {
+    return true;
+  }
+  return false;
 }
 
 module.exports = {
